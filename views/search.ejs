@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search: <%= query %> - NewsPortal</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <main>
+      <section class="search-page">
+        <div class="container">
+          <div class="page-header">
+            <h1>Search Results for "<%= query %>"</h1>
+            <p><%= results.length %> articles found</p>
+          </div>
+
+          <% if (results.length > 0) { %>
+          <div class="articles-grid">
+            <% results.forEach(article => { %>
+            <article class="article-card">
+              <a href="/article/<%= article.id %>">
+                <img src="<%= article.image %>" alt="<%= article.title %>" />
+                <div class="article-content">
+                  <span class="category-badge"><%= article.category %></span>
+                  <h3><%= article.title %></h3>
+                  <p><%= article.excerpt %></p>
+                  <div class="article-meta">
+                    <span>👤 <%= article.author %></span>
+                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-results">
+            <p>No articles found matching your search.</p>
+            <a href="/" class="btn">Back to Home</a>
+          </div>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

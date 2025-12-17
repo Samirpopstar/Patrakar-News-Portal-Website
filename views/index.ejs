@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patrakar: NewsPortal Website</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <main>
+      <!-- Featured Section -->
+      <section class="featured-section">
+        <div class="container">
+          <h2 class="section-title">Featured News</h2>
+          <div class="featured-grid">
+            <% featuredArticles.forEach((article, index) => { %>
+            <article
+              class="featured-card <%= index === 0 ? 'main-featured' : '' %>"
+            >
+              <a href="/article/<%= article.id %>">
+                <img src="<%= article.image %>" alt="<%= article.title %>" />
+                <div class="featured-content">
+                  <span class="category-badge"><%= article.category %></span>
+                  <h3><%= article.title %></h3>
+                  <p><%= article.excerpt %></p>
+                  <div class="article-meta">
+                    <span>👤 <%= article.author %></span>
+                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                    <span>👁️ <%= article.views %></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+            <% }); %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latest Articles -->
+      <section class="articles-section">
+        <div class="container">
+          <h2 class="section-title">Breaking News</h2>
+          <div class="articles-grid">
+            <% latestArticles.forEach(article => { %>
+            <article class="article-card">
+              <a href="/article/<%= article.id %>">
+                <img src="<%= article.image %>" alt="<%= article.title %>" />
+                <div class="article-content">
+                  <span class="category-badge"><%= article.category %></span>
+                  <h3><%= article.title %></h3>
+                  <p><%= article.excerpt %></p>
+                  <div class="article-meta">
+                    <span>👤 <%= article.author %></span>
+                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+            <% }); %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories -->
+      <section id="categories-section">
+        <div class="container">
+          <h2 class="section-title">Browse by Category</h2>
+          <div class="categories-grid">
+            <% categories.forEach(category => { %>
+            <a href="/category/<%= category %>" class="category-card">
+              <h3><%= category %></h3>
+            </a>
+            <% }); %>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

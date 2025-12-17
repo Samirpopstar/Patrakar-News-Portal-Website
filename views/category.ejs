@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= category %> - NewsPortal</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <main>
+      <section class="category-page">
+        <div class="container">
+          <div class="page-header">
+            <h1><%= category %></h1>
+            <p><%= articles.length %> articles found</p>
+          </div>
+
+          <div class="articles-grid">
+            <% articles.forEach(article => { %>
+            <article class="article-card">
+              <a href="/article/<%= article.id %>">
+                <img src="<%= article.image %>" alt="<%= article.title %>" />
+                <div class="article-content">
+                  <span class="category-badge"><%= article.category %></span>
+                  <h3><%= article.title %></h3>
+                  <p><%= article.excerpt %></p>
+                  <div class="article-meta">
+                    <span>👤 <%= article.author %></span>
+                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+            <% }); %>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= article ? 'Edit' : 'Create' %> Article - NewsPortal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <h3>Admin Menu</h3>
+        <nav>
+          <a href="/admin/dashboard">📊 Dashboard</a>
+          <a href="/admin/users">👥 Users</a>
+          <a href="/admin/articles/new" class="active">➕ New Article</a>
+        </nav>
+      </aside>
+
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1><%= article ? 'Edit' : 'Create New' %> Article</h1>
+        </div>
+
+        <form action="<%= article ? `/admin/articles/${article.id}` : '/admin/articles' %>" method="POST" class="article-form">
+          <div class="form-group">
+            <label for="title">Title *</label>
+            <input type="text" id="title" name="title" value="<%= article ? article.title : '' %>" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Category *</label>
+              <select id="category" name="category" required>
+                <option value="Technology" <%= article && article.category === 'Technology' ? 'selected' : '' %>>Technology</option>
+                <option value="Business" <%= article && article.category === 'Business' ? 'selected' : '' %>>Business</option>
+                <option value="Sports" <%= article && article.category === 'Sports' ? 'selected' : '' %>>Sports</option>
+                <option value="Science" <%= article && article.category === 'Science' ? 'selected' : '' %>>Science</option>
+                <option value="Environment" <%= article && article.category === 'Environment' ? 'selected' : '' %>>Environment</option>
+                <option value="Health" <%= article && article.category === 'Health' ? 'selected' : '' %>>Health</option>
+                <option value="Entertainment" <%= article && article.category === 'Entertainment' ? 'selected' : '' %>>Entertainment</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="image">Image URL</label>
+              <input type="url" id="image" name="image" value="<%= article ? article.image : '' %>" placeholder="https://example.com/image.jpg">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="excerpt">Short Description</label>
+            <textarea id="excerpt" name="excerpt" rows="2" placeholder="Short summary of the article..."><%= article ? article.excerpt : '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="content">Content *</label>
+            <textarea id="content" name="content" rows="12" required><%= article ? article.content : '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="featured" <%= article && article.featured ? 'checked' : '' %>>
+              <span>Mark as Featured</span>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><%= article ? 'Update' : 'Create' %> Article</button>
+            <a href="/admin/dashboard" class="btn">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

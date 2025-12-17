@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= article.title %> - NewsPortal</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <main>
+      <article class="article-detail">
+        <div class="container-narrow">
+          <div class="article-header">
+            <span class="category-badge"><%= article.category %></span>
+            <h1><%= article.title %></h1>
+            <div class="article-meta">
+              <span>👤 <%= article.author %></span>
+              <span>📅 <%= article.date.toLocaleDateString() %></span>
+              <span>👁️ <%= article.views %> views</span>
+            </div>
+          </div>
+
+          <img
+            src="<%= article.image %>"
+            alt="<%= article.title %>"
+            class="article-image"
+          />
+
+          <div class="article-body"><%= article.content %></div>
+        </div>
+      </article>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

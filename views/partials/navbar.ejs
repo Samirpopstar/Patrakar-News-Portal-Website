@@ -1,0 +1,31 @@
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="logo"
+      ><span id="logo-left">Patr</span><span id="logo-right">akar</span></a
+    >
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/#categories-section">Categories</a>
+      <!-- <a href="/category/Business">Business</a>
+      <a href="/category/Sports">Sports</a>
+      <a href="/category/Science">Science</a> -->
+      <a href="/admin/dashboard">Admin</a>
+      <a href="/auth/logout">Logout</a>
+      <a href="/auth/login">Login</a>
+      <a href="/auth/register">Register</a>
+    </div>
+    <form action="/search" method="GET" class="search-form">
+      <input type="text" name="q" placeholder="Search..." required />
+      <button type="submit">🔍</button>
+    </form>
+  </div>
+</nav>
+
+<script>
+  document
+    .getElementById("mobileMenuToggle")
+    ?.addEventListener("click", function () {
+      document.getElementById("navLinks").classList.toggle("active");
+    });
+</script>
