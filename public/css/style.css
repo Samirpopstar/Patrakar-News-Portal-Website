@@ -799,3 +799,79 @@ td a:hover {
   color: var(--secondary);
   font-weight: 500;
 }
+
+/* Comments Section */
+.comments-section {
+  background: white;
+  padding: 3rem 0;
+  margin-top: 2rem;
+}
+
+.comment-form-container {
+  /* background: var(--gray); */
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.comment-login-prompt {
+  background: var(--gray);
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.comment-login-prompt a {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.comments-list {
+  margin-top: 2rem;
+}
+
+.comment-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.comment-author {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.author-avatar {
+  font-size: 2rem;
+}
+
+/* Contact Section */
+
+.contact-section .container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.contact-info p {
+  margin-bottom: 1.8em;
+}

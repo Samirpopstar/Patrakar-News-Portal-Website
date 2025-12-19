@@ -10,10 +10,15 @@
       <!-- <a href="/category/Business">Business</a>
       <a href="/category/Sports">Sports</a>
       <a href="/category/Science">Science</a> -->
+      <% if (user) { %> <% if (user.role === 'admin') { %>
       <a href="/admin/dashboard">Admin</a>
+      <% } %>
+      <span class="user-welcome">Welcome, <%= user.username %>!</span>
       <a href="/auth/logout">Logout</a>
+      <% } else { %>
       <a href="/auth/login">Login</a>
       <a href="/auth/register">Register</a>
+      <% } %>
     </div>
     <form action="/search" method="GET" class="search-form">
       <input type="text" name="q" placeholder="Search..." required />

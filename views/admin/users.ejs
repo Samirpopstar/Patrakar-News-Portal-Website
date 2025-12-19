@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management - NewsPortal</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+
+    <main>
+      <div class="admin-layout">
+        <aside class="admin-sidebar">
+          <h3>Admin Menu</h3>
+          <nav>
+            <a href="/admin/dashboard">📊 Dashboard</a>
+            <a href="/admin/users" class="active">👥 Users</a>
+            <a href="/admin/articles/new">➕ New Article</a>
+          </nav>
+        </aside>
+
+        <div class="admin-content">
+          <div class="admin-header">
+            <h1>User Management</h1>
+            <p>Total Users: <%= users.length %></p>
+          </div>
+
+          <div class="admin-section">
+            <div class="users-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Registered</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% users.forEach(u => { %>
+                  <tr>
+                    <td><%= u.id %></td>
+                    <td><%= u.username %></td>
+                    <td><%= u.email %></td>
+                    <td>
+                      <% if (u.role === 'admin') { %>
+                      <span class="badge badge-success">Admin</span>
+                      <% } else { %>
+                      <span class="badge">User</span>
+                      <% } %>
+                    </td>
+                    <td><%= u.createdAt.toLocaleDateString() %></td>
+                    <td class="actions">
+                      <% if (u.id !== user.id) { %>
+                      <form
+                        action="/admin/users/<%= u.id %>/delete"
+                        method="POST"
+                        style="display: inline"
+                        onsubmit="return confirm('Are you sure you want to delete this user?');"
+                      >
+                        <button type="submit" class="btn-delete">Delete</button>
+                      </form>
+                      <% } else { %>
+                      <span class="text-muted">Current User</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>

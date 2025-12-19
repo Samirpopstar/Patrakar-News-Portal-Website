@@ -1,5 +1,6 @@
 import express from "express";
 import { articles } from "../models/Article.js";
+import { getCommentsByArticleId } from "../models/Comment.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// Single article page
+// Single article page (UPDATED WITH COMMENTS)
 router.get("/article/:id", (req, res) => {
   const article = articles.find((a) => a.id === parseInt(req.params.id));
 
@@ -26,9 +27,14 @@ router.get("/article/:id", (req, res) => {
     const relatedArticles = articles
       .filter((a) => a.category === article.category && a.id !== article.id)
       .slice(0, 3);
+
+    // Get comments for this article
+    const articleComments = getCommentsByArticleId(article.id);
+
     res.render("article", {
       article,
       relatedArticles,
+      comments: articleComments,
     });
   } else {
     res.status(404).render("404");
