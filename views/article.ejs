@@ -28,7 +28,11 @@
             class="article-image"
           />
 
-          <div class="article-body"><%= article.content %></div>
+          <div class="article-body"><%- article.content %></div>
+
+          <div class="article-actions">
+            <button class="btn-share">📤 Share Article</button>
+          </div>
         </div>
       </article>
 
@@ -97,7 +101,9 @@
                     name="articleId"
                     value="<%= article.id %>"
                   />
-                  <button type="submit" class="btn btn-primary">Delete</button>
+                  <button type="submit" class="btn-delete-comment">
+                    Delete
+                  </button>
                 </form>
                 <% } %>
               </div>

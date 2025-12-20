@@ -10,8 +10,7 @@ export const articles = [
     category: "Technology",
     author: "Admin",
     date: new Date("2025-11-5"),
-    image:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80",
+    image: "/uploads/tech.jpeg",
     featured: true,
     views: 10,
   },
@@ -26,8 +25,7 @@ export const articles = [
     category: "Environment",
     author: "Admin",
     date: new Date("2025-11-6"),
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80",
+    image: "/uploads/tech.jpeg",
     featured: true,
     views: 980,
   },
@@ -42,8 +40,7 @@ export const articles = [
     category: "Sports",
     author: "Admin",
     date: new Date("2025-11-6"),
-    image:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=80",
+    image: "/uploads/tech.jpeg",
     featured: false,
     views: 756,
   },
@@ -57,8 +54,7 @@ export const articles = [
     category: "Science",
     author: "Admin",
     date: new Date("2025-11-7"),
-    image:
-      "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=1200&q=80",
+    image: "/uploads/tech.jpeg",
     featured: false,
     views: 2100,
   },
@@ -73,11 +69,44 @@ export const articles = [
     category: "Business",
     author: "Admin",
     date: new Date("2025-11-8"),
-    image:
-      "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80",
+    image: "/uploads/tech.jpeg",
     featured: false,
     views: 543,
   },
 ];
 
-export default { articles };
+let articleIdCounter = 6;
+
+export const createArticle = (articleData) => {
+  const newArticle = {
+    id: articleIdCounter++,
+    ...articleData,
+    date: new Date(),
+    views: 0,
+  };
+  articles.push(newArticle);
+  return newArticle;
+};
+
+export const updateArticle = (id, articleData) => {
+  const index = articles.findIndex((a) => a.id === id);
+  if (index !== -1) {
+    articles[index] = {
+      ...articles[index],
+      ...articleData,
+    };
+    return articles[index];
+  }
+  return null;
+};
+
+export const deleteArticle = (id) => {
+  const index = articles.findIndex((a) => a.id === id);
+  if (index !== -1) {
+    articles.splice(index, 1);
+    return true;
+  }
+  return false;
+};
+
+export default { articles, createArticle, updateArticle, deleteArticle };

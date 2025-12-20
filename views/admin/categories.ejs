@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category Management - NewsPortal</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+
+    <main>
+      <div class="admin-layout">
+        <aside class="admin-sidebar">
+          <h3>Admin Menu</h3>
+          <nav>
+            <a href="/admin/dashboard">📊 Dashboard</a>
+            <a href="/admin/articles/new">➕ New Article</a>
+            <a href="/admin/categories" class="active">Categories</a>
+            <a href="/admin/users">👥 Users</a>
+          </nav>
+        </aside>
+
+        <div class="admin-content">
+          <div class="admin-header">
+            <h1>Category Management</h1>
+            <p>Total Categories: <%= categories.length %></p>
+          </div>
+
+          <% if (error) { %>
+          <div class="alert alert-error"><%= error %></div>
+          <% } %> <% if (success) { %>
+          <div class="alert alert-success"><%= success %></div>
+          <% } %>
+
+          <!-- Add Category Form -->
+          <div class="admin-section">
+            <h2>Add New Category</h2>
+            <form
+              action="/admin/categories"
+              method="POST"
+              class="category-form"
+            >
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name">Category Name *</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="e.g., Politics, Entertainment"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Add Category
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Categories List -->
+          <div class="admin-section">
+            <h2>All Categories</h2>
+            <div class="categories-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% categories.forEach(category => { %>
+                  <tr>
+                    <td><%= category.id %></td>
+                    <td><strong><%= category.name %></strong></td>
+                    <td><%= category.createdAt.toLocaleDateString() %></td>
+                    <td class="actions">
+                      <a
+                        href="/category/<%= category.slug %>"
+                        class="btn-view"
+                        target="_blank"
+                        >View</a
+                      >
+                      <form
+                        action="/admin/categories/<%= category.id %>/delete"
+                        method="POST"
+                        style="display: inline"
+                        onsubmit="return confirm('Are you sure? This will fail if articles use this category.');"
+                      >
+                        <button type="submit" class="btn-delete">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>

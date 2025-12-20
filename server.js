@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 import routes from "./routes/index.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
@@ -13,7 +14,20 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3000;
 
-// View engine setup
+// Create upload directories if they don't exist
+// might delete this later
+const uploadDirs = [
+  path.join(__dirname, "public/uploads"),
+  path.join(__dirname, "public/uploads/articles"),
+  path.join(__dirname, "public/uploads/ckeditor"),
+];
+
+uploadDirs.forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
