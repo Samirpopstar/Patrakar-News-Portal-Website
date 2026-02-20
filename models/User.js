@@ -1,50 +1,45 @@
-export const users = [
-  {
-    id: 1,
-    username: "admin",
-    password: "admin123",
-    email: "admin@newsportal.com",
-    role: "admin",
-    createdAt: new Date("2025-09-01"),
-  },
-];
+import pool from "../config/database.js";
 
-let userIdCounter = 2;
+export async function createUser(username, email, password) {
+  const [result] = await pool.query(
+    "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)",
+    [username, email, password, "user"]
+  );
+  return result.insertId;
+}
 
-export const createUser = (username, email, password) => {
-  const newUser = {
-    id: userIdCounter++,
+export async function findUserByUsername(username) {
+  const [rows] = await pool.query("SELECT * FROM users WHERE username = ?", [
     username,
+  ]);
+  return rows[0];
+}
+
+export async function findUserByEmail(email) {
+  const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
     email,
-    password,
-    role: "user",
-    createdAt: new Date(),
-  };
-  users.push(newUser);
-  return newUser;
-};
+  ]);
+  return rows[0];
+}
 
-export const findUserByUsername = (username) => {
-  return users.find((u) => u.username === username);
-};
+export async function findUserById(id) {
+  const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+  return rows[0];
+}
 
-export const findUserByEmail = (email) => {
-  return users.find((u) => u.email === email);
-};
+export async function getAllUsers() {
+  const [rows] = await pool.query(
+    "SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC"
+  );
+  return rows;
+}
 
-export const deleteUser = (id) => {
-  const index = users.findIndex((u) => u.id === id);
-  if (index !== -1) {
-    users.splice(index, 1);
-    return true;
-  }
-  return false;
-};
+export async function deleteUser(id) {
+  const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
+  return result.affectedRows > 0;
+}
 
-export default {
-  users,
-  createUser,
-  findUserByUsername,
-  findUserByEmail,
-  deleteUser,
-};
+export async function getUserCount() {
+  const [rows] = await pool.query("SELECT COUNT(*) as count FROM users");
+  return rows[0].count;
+}

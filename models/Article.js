@@ -1,112 +1,92 @@
-export const articles = [
-  {
-    id: 1,
-    title: "Artificial Intelligence",
-    slug: "ai-transforms-healthcare",
-    content:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    excerpt:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. ",
-    category: "Technology",
-    author: "Admin",
-    date: new Date("2025-11-5"),
-    image: "/uploads/tech.jpeg",
-    featured: true,
-    views: 10,
-  },
-  {
-    id: 2,
-    title: "Renewable Energy News",
-    slug: "renewable-energy-milestone",
-    content:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    excerpt:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.",
-    category: "Environment",
-    author: "Admin",
-    date: new Date("2025-11-6"),
-    image: "/uploads/tech.jpeg",
-    featured: true,
-    views: 980,
-  },
-  {
-    id: 3,
-    title: "Olympic Champion News",
-    slug: "olympic-world-record",
-    content:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    excerpt:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. ",
-    category: "Sports",
-    author: "Admin",
-    date: new Date("2025-11-6"),
-    image: "/uploads/tech.jpeg",
-    featured: false,
-    views: 756,
-  },
-  {
-    id: 4,
-    title: "Space News",
-    slug: "mars-colony-timeline",
-    content:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos",
-    excerpt: "Lorem ipsum dolor sit amet consectetur adipiscing elit. ",
-    category: "Science",
-    author: "Admin",
-    date: new Date("2025-11-7"),
-    image: "/uploads/tech.jpeg",
-    featured: false,
-    views: 2100,
-  },
-  {
-    id: 5,
-    title: "Global Markets News",
-    slug: "markets-rally-economic-recovery",
-    content:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    excerpt:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mis.",
-    category: "Business",
-    author: "Admin",
-    date: new Date("2025-11-8"),
-    image: "/uploads/tech.jpeg",
-    featured: false,
-    views: 543,
-  },
-];
+import pool from "../config/database.js";
 
-let articleIdCounter = 6;
+export async function createArticle(articleData) {
+  const { title, slug, content, excerpt, category, image, author, featured } =
+    articleData;
+  const [result] = await pool.query(
+    "INSERT INTO articles (title, slug, content, excerpt, category, image, author, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [title, slug, content, excerpt, category, image, author, featured ? 1 : 0]
+  );
+  return result.insertId;
+}
 
-export const createArticle = (articleData) => {
-  const newArticle = {
-    id: articleIdCounter++,
-    ...articleData,
-    date: new Date(),
-    views: 0,
-  };
-  articles.push(newArticle);
-  return newArticle;
-};
+export async function updateArticle(id, articleData) {
+  const { title, slug, content, excerpt, category, image, featured } =
+    articleData;
+  const [result] = await pool.query(
+    "UPDATE articles SET title = ?, slug = ?, content = ?, excerpt = ?, category = ?, image = ?, featured = ? WHERE id = ?",
+    [title, slug, content, excerpt, category, image, featured ? 1 : 0, id]
+  );
+  return result.affectedRows > 0;
+}
 
-export const updateArticle = (id, articleData) => {
-  const index = articles.findIndex((a) => a.id === id);
-  if (index !== -1) {
-    articles[index] = {
-      ...articles[index],
-      ...articleData,
-    };
-    return articles[index];
-  }
-  return null;
-};
+export async function deleteArticle(id) {
+  const [result] = await pool.query("DELETE FROM articles WHERE id = ?", [id]);
+  return result.affectedRows > 0;
+}
 
-export const deleteArticle = (id) => {
-  const index = articles.findIndex((a) => a.id === id);
-  if (index !== -1) {
-    articles.splice(index, 1);
-    return true;
-  }
-  return false;
-};
+export async function getAllArticles() {
+  const [rows] = await pool.query(
+    "SELECT * FROM articles ORDER BY created_at DESC"
+  );
+  return rows;
+}
 
-export default { articles, createArticle, updateArticle, deleteArticle };
+export async function getArticleById(id) {
+  const [rows] = await pool.query("SELECT * FROM articles WHERE id = ?", [id]);
+  return rows[0];
+}
+
+export async function getArticlesByCategory(category) {
+  const [rows] = await pool.query(
+    "SELECT * FROM articles WHERE category = ? ORDER BY created_at DESC",
+    [category]
+  );
+  return rows;
+}
+
+export async function getFeaturedArticles(limit = 3) {
+  const [rows] = await pool.query(
+    "SELECT * FROM articles WHERE featured = 1 ORDER BY created_at DESC LIMIT ?",
+    [limit]
+  );
+  return rows;
+}
+
+export async function getLatestArticles(limit = 6) {
+  const [rows] = await pool.query(
+    "SELECT * FROM articles ORDER BY created_at DESC LIMIT ?",
+    [limit]
+  );
+  return rows;
+}
+
+export async function searchArticles(query) {
+  const searchTerm = `%${query}%`;
+  const [rows] = await pool.query(
+    "SELECT * FROM articles WHERE title LIKE ? OR content LIKE ? OR category LIKE ? ORDER BY created_at DESC",
+    [searchTerm, searchTerm, searchTerm]
+  );
+  return rows;
+}
+
+export async function incrementArticleViews(id) {
+  await pool.query("UPDATE articles SET views = views + 1 WHERE id = ?", [id]);
+}
+
+export async function getArticleCount() {
+  const [rows] = await pool.query("SELECT COUNT(*) as count FROM articles");
+  return rows[0].count;
+}
+
+export async function getFeaturedArticleCount() {
+  const [rows] = await pool.query(
+    "SELECT COUNT(*) as count FROM articles WHERE featured = 1"
+  );
+  return rows[0].count;
+}
+
+export async function getTotalViews() {
+  const [rows] = await pool.query("SELECT SUM(views) as total FROM articles");
+  return rows[0].total || 0;
+}

@@ -27,7 +27,7 @@
                   <p><%= article.excerpt %></p>
                   <div class="article-meta">
                     <span>👤 <%= article.author %></span>
-                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                    <span>📅 <%= article.created_at %></span>
                     <span>👁️ <%= article.views %></span>
                   </div>
                 </div>
@@ -53,7 +53,7 @@
                   <p><%= article.excerpt %></p>
                   <div class="article-meta">
                     <span>👤 <%= article.author %></span>
-                    <span>📅 <%= article.date.toLocaleDateString() %></span>
+                    <span>📅 <%= article.created_at %></span>
                   </div>
                 </div>
               </a>
@@ -69,8 +69,8 @@
           <h2 class="section-title">Browse by Category</h2>
           <div class="categories-grid">
             <% categories.forEach(category => { %>
-            <a href="/category/<%= category %>" class="category-card">
-              <h3><%= category %></h3>
+            <a href="/category/<%=category.slug %>" class="category-card">
+              <h3><%= category.name %></h3>
             </a>
             <% }); %>
           </div>

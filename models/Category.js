@@ -1,65 +1,54 @@
-export const categories = [
-  {
-    id: 1,
-    name: "Technology",
-    slug: "technology",
-    createdAt: new Date("2025-01-01"),
-  },
-  {
-    id: 2,
-    name: "Business",
-    slug: "business",
-    createdAt: new Date("2025-01-01"),
-  },
-  { id: 3, name: "Sports", slug: "sports", createdAt: new Date("2025-01-01") },
-  {
-    id: 4,
-    name: "Science",
-    slug: "science",
-    createdAt: new Date("2025-01-01"),
-  },
-  {
-    id: 5,
-    name: "Environment",
-    slug: "environment",
-    createdAt: new Date("2025-01-01"),
-  },
-  { id: 6, name: "Health", slug: "health", createdAt: new Date("2025-01-01") },
-];
+import pool from "../config/database.js";
 
-let categoryIdCounter = 7;
-
-export const createCategory = (name) => {
+export async function createCategory(name) {
   const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
-  const newCategory = {
-    id: categoryIdCounter++,
+  const [result] = await pool.query(
+    "INSERT INTO categories (name, slug) VALUES (?, ?)",
+    [name, slug]
+  );
+  return result.insertId;
+}
+
+export async function getAllCategories() {
+  const [rows] = await pool.query(
+    "SELECT * FROM categories ORDER BY created_at DESC"
+  );
+  return rows;
+}
+
+export async function findCategoryByName(name) {
+  const [rows] = await pool.query("SELECT * FROM categories WHERE name = ?", [
     name,
-    slug,
-    createdAt: new Date(),
-  };
-  categories.push(newCategory);
-  return newCategory;
-};
+  ]);
+  return rows[0];
+}
 
-export const deleteCategory = (id) => {
-  const index = categories.findIndex((c) => c.id === id);
-  if (index !== -1) {
-    categories.splice(index, 1);
-    return true;
-  }
-  return false;
-};
+export async function findCategoryById(id) {
+  const [rows] = await pool.query("SELECT * FROM categories WHERE id = ?", [
+    id,
+  ]);
+  return rows[0];
+}
 
-export const findCategoryByName = (name) => {
-  return categories.find((c) => c.name.toLowerCase() === name.toLowerCase());
-};
+export async function deleteCategory(id) {
+  const [result] = await pool.query("DELETE FROM categories WHERE id = ?", [
+    id,
+  ]);
+  return result.affectedRows > 0;
+}
 
-export default {
-  categories,
-  createCategory,
-  deleteCategory,
-  findCategoryByName,
-};
+export async function getCategoryCount() {
+  const [rows] = await pool.query("SELECT COUNT(*) as count FROM categories");
+  return rows[0].count;
+}
+
+export async function getArticleCountByCategory(categoryName) {
+  const [rows] = await pool.query(
+    "SELECT COUNT(*) as count FROM articles WHERE category = ?",
+    [categoryName]
+  );
+  return rows[0].count;
+}

@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  users,
   createUser,
   findUserByUsername,
   findUserByEmail,
@@ -8,7 +7,6 @@ import {
 
 const router = express.Router();
 
-// Register page
 router.get("/register", (req, res) => {
   if (req.session.user) {
     return res.redirect("/");
@@ -16,58 +14,62 @@ router.get("/register", (req, res) => {
   res.render("auth/register", { error: null, success: null });
 });
 
-// Register handler
-router.post("/register", (req, res) => {
-  const { username, email, password, confirmPassword } = req.body;
+router.post("/register", async (req, res) => {
+  try {
+    const { username, email, password, confirmPassword } = req.body;
 
-  // Validation
-  if (!username || !email || !password || !confirmPassword) {
-    return res.render("auth/register", {
-      error: "All fields are required",
+    if (!username || !email || !password || !confirmPassword) {
+      return res.render("auth/register", {
+        error: "All fields are required",
+        success: null,
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.render("auth/register", {
+        error: "Passwords do not match",
+        success: null,
+      });
+    }
+
+    if (password.length < 6) {
+      return res.render("auth/register", {
+        error: "Password must be at least 6 characters",
+        success: null,
+      });
+    }
+
+    const existingUsername = await findUserByUsername(username);
+    if (existingUsername) {
+      return res.render("auth/register", {
+        error: "Username already exists",
+        success: null,
+      });
+    }
+
+    const existingEmail = await findUserByEmail(email);
+    if (existingEmail) {
+      return res.render("auth/register", {
+        error: "Email already exists",
+        success: null,
+      });
+    }
+
+    await createUser(username, email, password);
+
+    res.render("auth/register", {
+      error: null,
+      success: "Registration successful! You can now login.",
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.render("auth/register", {
+      error: "An error occurred during registration",
       success: null,
     });
   }
-
-  if (password !== confirmPassword) {
-    return res.render("auth/register", {
-      error: "Passwords do not match",
-      success: null,
-    });
-  }
-
-  if (password.length < 6) {
-    return res.render("auth/register", {
-      error: "Password must be at least 6 characters",
-      success: null,
-    });
-  }
-
-  // Check if username exists
-  if (findUserByUsername(username)) {
-    return res.render("auth/register", {
-      error: "Username already exists",
-      success: null,
-    });
-  }
-
-  // Check if email exists
-  if (findUserByEmail(email)) {
-    return res.render("auth/register", {
-      error: "Email already exists",
-      success: null,
-    });
-  }
-
-  // Create user
-  createUser(username, email, password);
-
-  res.render("auth/register", {
-    error: null,
-    success: "Registration successful! You can now login.",
-  });
 });
 
-// Login page
 router.get("/login", (req, res) => {
   if (req.session.user) {
     return res.redirect("/");
@@ -75,28 +77,28 @@ router.get("/login", (req, res) => {
   res.render("auth/login", { error: null });
 });
 
-// Login handler
-router.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await findUserByUsername(username);
 
-  if (user) {
-    req.session.user = user;
+    if (user && user.password === password) {
+      req.session.user = user;
 
-    // Redirect admin to dashboard, regular users to home
-    if (user.role === "admin") {
-      res.redirect("/admin/dashboard");
+      if (user.role === "admin") {
+        res.redirect("/admin/dashboard");
+      } else {
+        res.redirect("/");
+      }
     } else {
-      res.redirect("/");
+      res.render("auth/login", { error: "Invalid username or password" });
     }
-  } else {
-    res.render("auth/login", { error: "Invalid username or password" });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.render("auth/login", { error: "An error occurred during login" });
   }
 });
 
-// Logout
 router.get("/logout", (req, res) => {
   req.session.destroy();
   res.redirect("/");

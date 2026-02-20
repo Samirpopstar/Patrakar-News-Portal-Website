@@ -1,71 +1,85 @@
 import express from "express";
-import { articles } from "../models/Article.js";
+import {
+  getAllArticles,
+  getArticleById,
+  getFeaturedArticles,
+  getLatestArticles,
+  getArticlesByCategory,
+  searchArticles,
+  incrementArticleViews,
+} from "../models/Article.js";
 import { getCommentsByArticleId } from "../models/Comment.js";
+import { getAllCategories } from "../models/Category.js";
 
 const router = express.Router();
 
-// Home page
-router.get("/", (req, res) => {
-  const sortedArticles = [...articles].sort((a, b) => b.date - a.date);
-  const featuredArticles = sortedArticles.filter((a) => a.featured).slice(0, 3);
-  const latestArticles = sortedArticles.slice(0, 6);
-  const categories = [...new Set(articles.map((a) => a.category))];
+router.get("/", async (req, res) => {
+  try {
+    const featuredArticles = await getFeaturedArticles(3);
+    const latestArticles = await getLatestArticles(6);
+    const categories = await getAllCategories();
 
-  res.render("index", {
-    featuredArticles,
-    latestArticles,
-    categories,
-  });
-});
-
-// Single article page (UPDATED WITH COMMENTS)
-router.get("/article/:id", (req, res) => {
-  const article = articles.find((a) => a.id === parseInt(req.params.id));
-
-  if (article) {
-    article.views++;
-    const relatedArticles = articles
-      .filter((a) => a.category === article.category && a.id !== article.id)
-      .slice(0, 3);
-
-    // Get comments for this article
-    const articleComments = getCommentsByArticleId(article.id);
-
-    res.render("article", {
-      article,
-      relatedArticles,
-      comments: articleComments,
+    res.render("index", {
+      featuredArticles,
+      latestArticles,
+      categories,
     });
-  } else {
-    res.status(404).render("404");
+  } catch (error) {
+    console.error("Home page error:", error);
+    res.status(500).send("Error loading home page");
   }
 });
 
-// Category page
-router.get("/category/:category", (req, res) => {
-  const category = req.params.category;
-  const categoryArticles = articles
-    .filter((a) => a.category.toLowerCase() === category.toLowerCase())
-    .sort((a, b) => b.date - a.date);
+router.get("/article/:id", async (req, res) => {
+  try {
+    const article = await getArticleById(parseInt(req.params.id));
 
-  if (categoryArticles.length > 0) {
-    res.render("category", { category, articles: categoryArticles });
-  } else {
-    res.status(404).render("404");
+    if (article) {
+      await incrementArticleViews(article.id);
+      article.views++;
+      const articleComments = await getCommentsByArticleId(article.id);
+      const allArticles = await getAllArticles();
+
+      res.render("article", {
+        article,
+        comments: articleComments,
+        allArticles,
+      });
+    } else {
+      res.status(404).render("404");
+    }
+  } catch (error) {
+    console.error("Article page error:", error);
+    res.status(500).send("Error loading article");
   }
 });
 
-// Search
-router.get("/search", (req, res) => {
-  const query = req.query.q || "";
-  const searchResults = articles.filter(
-    (a) =>
-      a.title.toLowerCase().includes(query.toLowerCase()) ||
-      a.content.toLowerCase().includes(query.toLowerCase()) ||
-      a.category.toLowerCase().includes(query.toLowerCase())
-  );
+router.get("/category/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+    const categoryArticles = await getArticlesByCategory(category);
 
-  res.render("search", { query, results: searchResults });
+    if (categoryArticles.length > 0) {
+      res.render("category", { category, articles: categoryArticles });
+    } else {
+      res.status(404).render("404");
+    }
+  } catch (error) {
+    console.error("Category page error:", error);
+    res.status(500).send("Error loading category");
+  }
+});
+
+router.get("/search", async (req, res) => {
+  try {
+    const query = req.query.q || "";
+    const searchResults = await searchArticles(query);
+
+    res.render("search", { query, results: searchResults });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).send("Error performing search");
+  }
 });
 
 router.get("/about", (req, res) => {

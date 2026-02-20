@@ -17,6 +17,7 @@
             <a href="/admin/dashboard">📊 Dashboard</a>
             <a href="/admin/users" class="active">👥 Users</a>
             <a href="/admin/articles/new">➕ New Article</a>
+            <a href="/admin/categories">Add Category</a>
           </nav>
         </aside>
 
@@ -36,7 +37,6 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Registered</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -52,21 +52,7 @@
                       <span class="badge">User</span>
                       <% } %>
                     </td>
-                    <td><%= u.createdAt.toLocaleDateString() %></td>
-                    <td class="actions">
-                      <% if (u.id !== user.id) { %>
-                      <form
-                        action="/admin/users/<%= u.id %>/delete"
-                        method="POST"
-                        style="display: inline"
-                        onsubmit="return confirm('Are you sure you want to delete this user?');"
-                      >
-                        <button type="submit" class="btn-delete">Delete</button>
-                      </form>
-                      <% } else { %>
-                      <span class="text-muted">Current User</span>
-                      <% } %>
-                    </td>
+                    <td><%= u.created_at %></td>
                   </tr>
                   <% }); %>
                 </tbody>

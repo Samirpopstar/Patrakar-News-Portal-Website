@@ -7,6 +7,7 @@ import routes from "./routes/index.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import commentRoutes from "./routes/comments.js";
+import setupDatabase from "./config/setup-database.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,9 @@ uploadDirs.forEach((dir) => {
     fs.mkdirSync(dir, { recursive: true });
   }
 });
+
+// setup the database
+await setupDatabase();
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

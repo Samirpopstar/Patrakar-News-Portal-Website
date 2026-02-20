@@ -1,38 +1,32 @@
-export const comments = [];
+import pool from "../config/database.js";
 
-let commentIdCounter = 1;
+export async function createComment(articleId, userId, username, content) {
+  const [result] = await pool.query(
+    "INSERT INTO comments (article_id, user_id, username, content) VALUES (?, ?, ?, ?)",
+    [articleId, userId, username, content]
+  );
+  return result.insertId;
+}
 
-export const createComment = (articleId, userId, username, content) => {
-  const newComment = {
-    id: commentIdCounter++,
-    articleId,
-    userId,
-    username,
-    content,
-    createdAt: new Date(),
-  };
-  comments.push(newComment);
-  return newComment;
-};
+export async function getCommentsByArticleId(articleId) {
+  const [rows] = await pool.query(
+    "SELECT * FROM comments WHERE article_id = ? ORDER BY created_at DESC",
+    [articleId]
+  );
+  return rows;
+}
 
-export const getCommentsByArticleId = (articleId) => {
-  return comments
-    .filter((c) => c.articleId === articleId)
-    .sort((a, b) => b.createdAt - a.createdAt);
-};
+export async function deleteComment(id) {
+  const [result] = await pool.query("DELETE FROM comments WHERE id = ?", [id]);
+  return result.affectedRows > 0;
+}
 
-export const deleteComment = (id) => {
-  const index = comments.findIndex((c) => c.id === id);
-  if (index !== -1) {
-    comments.splice(index, 1);
-    return true;
-  }
-  return false;
-};
+export async function getCommentById(id) {
+  const [rows] = await pool.query("SELECT * FROM comments WHERE id = ?", [id]);
+  return rows[0];
+}
 
-export default {
-  comments,
-  createComment,
-  getCommentsByArticleId,
-  deleteComment,
-};
+export async function getCommentCount() {
+  const [rows] = await pool.query("SELECT COUNT(*) as count FROM comments");
+  return rows[0].count;
+}
